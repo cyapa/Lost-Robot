@@ -1,0 +1,6 @@
+images {
+  image: "/main/Level/images/ground01.png"
+}
+images {
+  image: "/main/Level/images/ground02.png"
+}

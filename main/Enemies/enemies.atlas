@@ -1,0 +1,40 @@
+animations {
+  id: "runningEnemy"
+  images {
+    image: "/main/Enemies/images/Run__000.png"
+  }
+  images {
+    image: "/main/Enemies/images/Run__001.png"
+  }
+  images {
+    image: "/main/Enemies/images/Run__002.png"
+  }
+  images {
+    image: "/main/Enemies/images/Run__003.png"
+  }
+  images {
+    image: "/main/Enemies/images/Run__004.png"
+  }
+  images {
+    image: "/main/Enemies/images/Run__005.png"
+  }
+  images {
+    image: "/main/Enemies/images/Run__006.png"
+  }
+  images {
+    image: "/main/Enemies/images/Run__007.png"
+  }
+  images {
+    image: "/main/Enemies/images/Run__008.png"
+  }
+  images {
+    image: "/main/Enemies/images/Run__009.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 15
+  flip_horizontal: 1
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

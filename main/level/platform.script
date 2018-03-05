@@ -1,0 +1,19 @@
+-- platform.script
+function init(self)
+    self.speed = 300      -- Default speed in pixels/s
+end
+
+function update(self, dt)
+    local pos = go.get_position()
+    if pos.x < -500 then
+        go.delete() 
+    end
+    pos.x = pos.x - self.speed * dt
+    go.set_position(pos)
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("set_speed") then
+        self.speed = message.speed
+    end
+end

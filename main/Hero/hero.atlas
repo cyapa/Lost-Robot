@@ -1,0 +1,114 @@
+images {
+  image: "/main/Hero/images/BodyA01.png"
+}
+images {
+  image: "/main/Hero/images/BodyA02.png"
+}
+images {
+  image: "/main/Hero/images/BodyB01.png"
+}
+images {
+  image: "/main/Hero/images/BodyB02.png"
+}
+images {
+  image: "/main/Hero/images/empty.png"
+}
+images {
+  image: "/main/Hero/images/Eye01.png"
+}
+images {
+  image: "/main/Hero/images/Head01.png"
+}
+images {
+  image: "/main/Hero/images/Head02.png"
+}
+images {
+  image: "/main/Hero/images/Head02B.png"
+}
+images {
+  image: "/main/Hero/images/Head03.png"
+}
+images {
+  image: "/main/Hero/images/Head03B.png"
+}
+images {
+  image: "/main/Hero/images/LegB01.png"
+}
+images {
+  image: "/main/Hero/images/LegB02.png"
+}
+images {
+  image: "/main/Hero/images/LegB03.png"
+}
+images {
+  image: "/main/Hero/images/LegB04.png"
+}
+images {
+  image: "/main/Hero/images/LegL00.png"
+}
+images {
+  image: "/main/Hero/images/LegLA01.png"
+}
+images {
+  image: "/main/Hero/images/LegLA02.png"
+}
+images {
+  image: "/main/Hero/images/LegLA03.png"
+}
+images {
+  image: "/main/Hero/images/LegLA04.png"
+}
+images {
+  image: "/main/Hero/images/LegR00.png"
+}
+images {
+  image: "/main/Hero/images/LegRA01.png"
+}
+images {
+  image: "/main/Hero/images/LegRA02.png"
+}
+images {
+  image: "/main/Hero/images/LegRA03.png"
+}
+images {
+  image: "/main/Hero/images/LegRA04.png"
+}
+images {
+  image: "/builtins/graphics/particle_blob.png"
+}
+images {
+  image: "/main/Hero/images/ThighL.png"
+}
+images {
+  image: "/main/Hero/images/ThighR.png"
+}
+images {
+  image: "/main/Hero/BACKUP/images/ArmL01.png"
+}
+images {
+  image: "/main/Hero/images/ArmL01.png"
+}
+images {
+  image: "/main/Hero/BACKUP/images/ArmL02.png"
+}
+images {
+  image: "/main/Hero/images/ArmL02.png"
+}
+images {
+  image: "/main/Hero/BACKUP/images/ArmL03.png"
+}
+images {
+  image: "/main/Hero/images/ArmL03.png"
+}
+images {
+  image: "/main/Hero/images/ArmR01.png"
+}
+images {
+  image: "/main/Hero/images/ArmR02.png"
+}
+images {
+  image: "/main/Hero/images/ArmR03.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

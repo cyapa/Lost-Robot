@@ -1,0 +1,261 @@
+-- gravity pulling the player down in pixel units/sˆ2
+local gravity = -20
+
+-- take-off speed when jumping in pixel units/s
+local jump_takeoff_speed = 900
+
+-- flag for whether location correction situation is active
+local correcting_location = false
+
+-- location where the player originally spawns
+local initial_location
+
+-- energy recover counter
+local e_counter = 0
+
+
+
+-- energy data that is in a bit funny way just temporary data here
+local enemyhitenergy = 5
+local jumpenergy = 1
+local dashenergy = 2
+local startenergy = 25
+local energy = { startenergy }
+
+--score data
+local enemyhitscore = 100;
+
+-- debug invincibility
+local invincibility = false
+
+
+function init(self)
+    -- this tells the engine to send input to on_input() in this script
+    msg.post(".", "acquire_input_focus")
+    -- save the starting position
+    self.position = go.get_position()
+    initial_location = go.get_position()
+
+    -- keep track of movement vector and if there is ground contact
+    self.velocity = vmath.vector3(0, 0, 0)
+    self.ground_contact = false
+end
+
+function final(self)
+    -- Return input focus when the object is deleted
+    msg.post(".", "release_input_focus")
+    print("player is dead")
+end
+
+
+
+-- JUMP ANIMATION
+
+local function play_animation(self, anim)
+    -- only play animations which are not already playing
+    if self.anim ~= anim then
+        -- tell the spine model to play the animation
+        spine.play("#spinemodel", anim, go.PLAYBACK_LOOP_FORWARD, 0.15)
+        -- remember which animation is playing
+        self.anim = anim
+    end
+end
+
+local function update_animation(self)
+    -- make sure the right animation is playing
+    if self.ground_contact then
+        play_animation(self, hash("run_right"))
+    else
+        if self.velocity.y > 0 then
+            play_animation(self, hash("jump_right"))
+        else
+            play_animation(self, hash("fall_right"))
+        end
+    end
+end
+
+--
+
+
+function update(self, dt)
+
+--kills player if goes behind the scene?
+   local pos = go.get_position()
+    if pos.x < -500 then
+        go.delete() 
+    end
+    if pos.y < -100 then
+    	go.delete()
+	end
+--    
+    local gravity = vmath.vector3(0, gravity, 0)
+
+    if not self.ground_contact then
+        -- Apply gravity if there's no ground contact
+        self.velocity = self.velocity + gravity
+    end
+    
+    -- speeds up if x position is lower than 100 but not over initial position
+    if go.get_position().x < 100 then
+    	self.velocity.x = self.velocity.x + 50
+    	correcting_location = true
+	elseif go.get_position().x > initial_location.x and correcting_location == true then
+		self.velocity.x = 0
+		correcting_location = false
+	end
+	
+	-- slows down if x position is higher than 900 but not less than 500
+    if go.get_position().x > 900 then
+    	self.velocity.x = self.velocity.x - 50
+    	correcting_location = true
+	end
+
+    -- apply velocity to the player character
+    go.set_position(go.get_position() + self.velocity * dt)
+    update_animation(self) -- JUMP ANIMATION
+    
+    -- reset volatile state
+    self.correction = vmath.vector3()
+    self.ground_contact = false
+    
+    e_counter = e_counter + 1
+    if e_counter > 500 then
+    	--msg.post("/gui#gui", "add_energy", { 5 })
+    	e_counter = 0
+	end
+end
+
+local function handle_geometry_contact(self, normal, distance)
+    -- project the correction vector onto the contact normal
+    -- (the correction vector is the 0-vector for the first contact point)
+    local proj = vmath.dot(self.correction, normal)
+    -- calculate the compensation we need to make for this contact point
+    local comp = (distance - proj) * normal
+    -- add it to the correction vector
+    self.correction = self.correction + comp
+    -- apply the compensation to the player character
+    go.set_position(go.get_position() + comp)
+    -- check if the normal points enough up to consider the player standing on the ground
+    -- (0.7 is roughly equal to 45 degrees deviation from pure vertical direction)
+    if normal.y > 0.7 then
+        self.ground_contact = true
+    end
+    -- project the velocity onto the normal
+    proj = vmath.dot(self.velocity, normal)
+    -- if the projection is negative, it means that some of the velocity points towards the contact point
+    if proj < 0 then
+        -- remove that component in that case
+        self.velocity = self.velocity - proj * normal
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("contact_point_response") then
+        -- check if we received a contact point message. One message for each contact point
+        if message.group == hash("geometry") then
+            handle_geometry_contact(self, message.normal, message.distance)
+        elseif message.group == hash("enemy") then
+        	msg.post(".", "drain_energy", { enemyhitenergy })
+        	msg.post(".", "add_score", { enemyhitscore })
+        end
+    elseif message_id == hash("die") then
+ 
+    	if invincibility == false then
+    		go.delete()
+		else
+			print("invincibility is active, can't die")
+		end
+	elseif message_id == hash("drain_energy") then
+		local amount = message
+		msg.post("/gui#gui", "remove_energy", amount) -- energy drain from impact
+	elseif message_id == hash("energy_data") then
+		energy = message
+	
+	end
+end
+
+local function jump(self)
+	-- check for sufficient energy
+	msg.post("/gui#gui", "show_energy")
+	--print(energy[1])
+	if ((energy[1] - jumpenergy) >= 0) then
+	    -- basic jump from ground
+	    if self.ground_contact then
+	        -- play sound effect
+	        msg.post("#jump", "play_sound")
+	        msg.post("/gui#gui", "remove_energy", { jumpenergy })
+	        -- set take-off speed
+	        self.velocity.y = jump_takeoff_speed
+	    -- jetpack jump during air takes double energy and is less efficient
+	    else 
+	    	self.velocity.y = self.velocity.y + jump_takeoff_speed * 0.5
+    		msg.post("/gui#gui", "remove_energy", { (jumpenergy * 2) })
+	    end
+    else
+    	print("insufficient energy to jump!")
+    	self.velocity.y = self.velocity.y + jump_takeoff_speed * 0.2
+    end
+end
+
+local function abort_jump(self)
+    -- cut the jump short if we are still going up
+    if self.velocity.y > 0 then
+        -- scale down the upwards speed
+        self.velocity.y = self.velocity.y * 0.5
+    end
+end
+
+local function dash(self)
+    -- only allow dash from ground
+    
+    if self.ground_contact then
+        -- play sound effect
+        --msg.post("#jump", "play_sound")
+        -- only allow dashing if the player is not too far ahead and not too fast already
+        if self.velocity.x <= 0 and go.get_position().x < 700 then
+        	self.velocity.x = 250
+
+        	msg.post("/gui#gui", "remove_energy", { dashenergy })
+    	elseif self.velocity.x < 300 and go.get_position().x < 700 then
+        	self.velocity.x = self.velocity.x * 1.1 
+        	--print("pos: ", go.get_position(), " speed: ", self.velocity.x)
+        	msg.post("/gui#gui", "remove_energy", { dashenergy })
+    	end
+    end
+end
+
+local function abort_dash(self)
+    -- stop dashing
+    if self.velocity.x > 0 then
+        -- scale down speed
+        self.velocity.x = 0
+        -- go.set_position(go.get_position() + vmath.vector3(200,0,0))
+    end
+end
+
+function on_input(self, action_id, action)
+    if action_id == hash("jump") or action_id == hash("touch") then
+        if action.pressed then
+            jump(self)
+        elseif action.released then
+            abort_jump(self)
+        end
+    end
+    if action_id == hash("dash") then
+        if action.pressed then
+            dash(self)
+        elseif action.released then
+        	abort_dash(self)
+        end
+    end
+    if action_id == hash("invincibility") then
+        if action.released then
+            if invincibility == true then
+            	invincibility = false
+        	else
+        		invincibility = true
+    		end
+    		print("player is invincible: ", invincibility)
+        end
+    end
+end

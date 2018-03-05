@@ -1,0 +1,36 @@
+name: "default"
+instances {
+  id: "hero"
+  prototype: "/main/Hero/hero.go"
+  position {
+    x: 27.437391
+    y: 33.67316
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "ground"
+  collection: "/main/Level/ground.collection"
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "controller"
+  data: "components {\n  id: \"script\"\n  component: \"/main/Level/controller.script\"\n  position {\n    x: 0.0\n    y: 0.0\n    z: 0.0\n  }\n  rotation {\n    x: 0.0\n    y: 0.0\n    z: 0.0\n    w: 1.0\n  }\n  properties {\n    id: \"speed\"\n    value: \"300.0\"\n    type: PROPERTY_TYPE_NUMBER\n  }\n}\n"
+  position {
+    x: 788.0144
+    y: 4.4970407
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}

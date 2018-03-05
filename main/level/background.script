@@ -1,0 +1,4 @@
+
+function init(self)
+    msg.post("#sound","play_sound") --play the background music
+end

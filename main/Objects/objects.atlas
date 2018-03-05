@@ -1,0 +1,60 @@
+images {
+  image: "/main/Objects/images/Bush (1).png"
+}
+images {
+  image: "/main/Objects/images/Bush (2).png"
+}
+images {
+  image: "/main/Objects/images/Cactus (1).png"
+}
+images {
+  image: "/main/Objects/images/Cactus (2).png"
+}
+images {
+  image: "/main/Objects/images/Cactus (3).png"
+}
+images {
+  image: "/main/Objects/images/Crate.png"
+}
+images {
+  image: "/main/Objects/images/Grass (1).png"
+}
+images {
+  image: "/main/Objects/images/Grass (2).png"
+}
+images {
+  image: "/main/Objects/images/Tree.png"
+}
+images {
+  image: "/main/Objects/images/tree1.png"
+}
+images {
+  image: "/main/Objects/images/tree2.png"
+}
+images {
+  image: "/main/Objects/images/tree3.png"
+}
+images {
+  image: "/main/Objects/images/tree4.png"
+}
+images {
+  image: "/main/Objects/images/tree5.png"
+}
+images {
+  image: "/main/Objects/images/Sign.png"
+}
+images {
+  image: "/main/Objects/images/SignArrow.png"
+}
+images {
+  image: "/main/Objects/images/Skeleton.png"
+}
+images {
+  image: "/main/Objects/images/Stone.png"
+}
+images {
+  image: "/main/Objects/images/StoneBlock.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

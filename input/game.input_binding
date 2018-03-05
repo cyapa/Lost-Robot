@@ -1,0 +1,16 @@
+key_trigger {
+  input: KEY_SPACE
+  action: "jump"
+}
+key_trigger {
+  input: KEY_LSHIFT
+  action: "dash"
+}
+key_trigger {
+  input: KEY_I
+  action: "invincibility"
+}
+touch_trigger {
+  input: TOUCH_MULTI
+  action: "touch"
+}

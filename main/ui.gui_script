@@ -1,0 +1,120 @@
+
+local energy_point_x_pos = 450;   
+local energy_point_width = 8;
+local energy_bars_last_x = 0;
+local createdNodesList = {}
+
+
+
+function init(self)
+
+
+
+    self.energy = 10 
+    self.score = 0
+    self.energypackvalue = 5
+    self.maxenergy = 50
+ 
+
+ local id = timer.seconds(10, function(self, id)
+ 	local node = gui.get_node("intro")
+	gui.delete_node(node);
+end)
+
+--Display starting energy stack
+energy_bars_last_x = add_energy_bars(self.energy,energy_point_x_pos);
+ 
+end
+
+
+
+function update(self, dt)
+	-- If energy goes below zero, hero must die
+    if self.energy < 0 then
+    	msg.post("/level/hero#script", "die")
+    	
+    	--Display game over texture
+    	--local node = gui.new_box_node(vmath.vector3(800, 200, 0), vmath.vector3(1000, 1000, 0))                    
+    --	gui.set_texture(node,"gameover");
+    	msg.post("/controller#sound", "stop_sound")
+		msg.post("/gui#gameover", "play_sound")--play energy pickup sound
+
+    end
+    
+    local energynode = gui.get_node("energy")
+    gui.set_text(energynode,self.energy)
+    
+
+
+    
+end
+
+function on_message(self, message_id, message, sender)
+	-- energy is added up to 50
+	-- index value 1 contains the amount of energy to be added
+    if message_id == hash("add_energy") then 
+    	        
+    	if self.energy < self.maxenergy then
+        	if (self.energy + self.energypackvalue) > self.maxenergy then
+        		self.energy = self.maxenergy        		
+    		else
+    			self.energy = self.energy + self.energypackvalue
+    			
+    		   energy_bars_last_x = add_energy_bars(self.energypackvalue,energy_bars_last_x);
+    		   print(energy_bars_last_x);
+
+ 
+			end
+    	end
+	-- index value 1 contains the amount of energy to be removed
+    elseif message_id == hash("remove_energy") then
+        local energyToRemove = message[1]
+    	self.energy = self.energy - energyToRemove
+       --remove energy bars
+       remove_energy_bars(energyToRemove);
+       
+	elseif message_id == hash("add_score") then 
+		self.score = self.score + message[1]
+	    local scorenode = gui.get_node("score")
+	    gui.set_text(scorenode, self.score)
+
+    elseif message_id == hash("show_energy") then
+    	local energy = { self.energy }
+    	msg.post(sender, "energy_data", energy)
+    end 
+end
+
+--function to add energy bars to GUI
+
+function add_energy_bars(add_bars,x)
+
+	local bars_x_pos = x
+	
+	while add_bars > 0 do
+
+        local node = gui.new_box_node(vmath.vector3(bars_x_pos, 600, 0), vmath.vector3(energy_point_width, 25, 0)) 
+                    
+    	gui.set_texture(node,"energyui");
+    	local maxNodeIndex = table.maxn(createdNodesList) + 1
+    	createdNodesList[maxNodeIndex] = node;   
+    	bars_x_pos =  bars_x_pos + energy_point_width;
+    	add_bars = add_bars-1;
+	end
+	
+ return bars_x_pos;
+end
+
+--function to remove energy bars
+function remove_energy_bars(removeBars)
+
+ 	while removeBars > 0 do        
+     	
+     	gui.delete_node(createdNodesList[table.maxn(createdNodesList)])
+     	energy_bars_last_x = energy_bars_last_x - energy_point_width
+     	table.remove(createdNodesList,table.maxn(createdNodesList)) 
+     	removeBars = removeBars -1
+
+	end
+end
+
+

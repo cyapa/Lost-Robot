@@ -1,0 +1,24 @@
+images {
+  image: "/main/level/images/ground01.png"
+}
+images {
+  image: "/main/level/images/ground02.png"
+}
+images {
+  image: "/main/level/images/ground03.png"
+}
+images {
+  image: "/main/level/images/ground04.png"
+}
+images {
+  image: "/main/level/images/groundup01.png"
+}
+images {
+  image: "/main/level/images/groundup02.png.png"
+}
+images {
+  image: "/main/level/images/groundup03.png.png"
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0
