@@ -1,5 +1,5 @@
 images {
-  image: "/main/GUI/images/energyPoints.png"
+  image: "/main/GUI/images/energyPoints_a.png"
 }
 margin: 0
 extrude_borders: 0

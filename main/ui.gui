@@ -50,7 +50,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "SCORE : "
+  text: "ENEMIES KILLED : "
   font: "system_font"
   id: "score_text"
   xanchor: XANCHOR_NONE
@@ -217,7 +217,7 @@ nodes {
 }
 nodes {
   position {
-    x: 88.04086
+    x: 169.38336
     y: 677.1194
     z: 0.0
     w: 1.0
@@ -301,8 +301,8 @@ nodes {
     w: 1.0
   }
   size {
-    x: 400.0
-    y: 200.0
+    x: 200.0
+    y: 100.0
     z: 0.0
     w: 1.0
   }
@@ -314,7 +314,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Press \"SPACE\" to jump and colide with the humans to kill them. Remember, every action drains energy! Collect energy packs to stay alive"
+  text: "Press \"SPACE\" to jump and colide with the humans to kill them. Remember, every action drains energy!"
   font: "system_font"
   id: "intro"
   xanchor: XANCHOR_NONE
@@ -333,7 +333,7 @@ nodes {
     w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
-  line_break: true
+  line_break: false
   layer: ""
   inherit_alpha: true
   clipping_mode: CLIPPING_MODE_NONE

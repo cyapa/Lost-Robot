@@ -1,0 +1,31 @@
+function init(self)
+    self.speed = 150      -- Default speed in pixels/s
+    self.collected = false
+end
+
+function update(self, dt)
+    local pos = go.get_position()
+    if pos.x < -500 then
+        go.delete() 
+    end
+    pos.x = pos.x - self.speed * dt
+    go.set_position(pos)
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("set_speed") then
+        self.speed = message.speed
+    end
+    
+     if self.collected == false and message_id == hash("collision_response") then
+        msg.post("gui#gui", "disable_energy")  -- add max energy
+        msg.post("#upgrade_pickup", "play_sound")--play upgrade pickup sound
+        
+        
+        self.collected = true
+        msg.post("#sprite", "disable")
+    elseif message_id == hash("start_animation") then
+        pos = go.get_position()
+        go.animate(go.get_id(), "position.y", go.PLAYBACK_LOOP_PINGPONG, pos.y + 24, go.EASING_INOUTSINE, 0.75, message.delay)
+    end
+end

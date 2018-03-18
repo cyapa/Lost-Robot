@@ -18,7 +18,7 @@ function on_message(self, message_id, message, sender)
     elseif message_id == hash("collision_response") then
     	--print("impact on enemy", go.get_id())
     	msg.post("#death", "play_sound")--play death scream
-		msg.post("gui#gui", "add_score", { 100 }) -- gives score
+		msg.post("gui#gui", "add_score", { 1 }) -- gives kills
     	go.delete()
     end
 end

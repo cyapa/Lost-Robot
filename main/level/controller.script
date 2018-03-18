@@ -8,6 +8,7 @@ local platform_heights = { 200, 350, 180, 400 }
 
 
 function init(self)
+	
     msg.post("#sound", "play_sound")
     self.gridw = 0
     msg.post("ground/controller#script", "set_speed", { speed = self.speed })
@@ -46,13 +47,21 @@ function update(self, dt)
        
     --Spawn coins 
         if math.random() > 0.4 then
-             --local energy_f = "#energy_factory"
              local energy_f = "#energy_factory"
-             local energy_h = math.random(200,500)
+             local energy_h = math.random(230,530)
              local energy_pos = factory.create(energy_f, vmath.vector3(1600,energy_h,1),nil, {}, 0.2)
              msg.post(energy_pos, "set_speed",{speed = self.speed})
           
-        end       
+        end  
+        
+    --Spawn upgrades 
+        if math.random() > 0.9 then
+             local upgrade_f = "#upgrade_factory"
+             local upgrade_h = math.random(250,550)
+             local upgrade_pos = factory.create(upgrade_f, vmath.vector3(1600,upgrade_h,1),nil, {}, 0.4)
+             msg.post(upgrade_pos, "set_speed",{speed = self.speed})
+          
+        end      
         
     end
 end

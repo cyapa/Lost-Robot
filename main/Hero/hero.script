@@ -20,7 +20,7 @@ local enemyhitenergy = 5
 local jumpenergy = 1
 local dashenergy = 2
 local startenergy = 25
-local energy = { startenergy }
+local energy = startenergy
 
 --score data
 local enemyhitscore = 100;
@@ -39,6 +39,7 @@ function init(self)
     -- keep track of movement vector and if there is ground contact
     self.velocity = vmath.vector3(0, 0, 0)
     self.ground_contact = false
+    self.energy = startenergy
 end
 
 function final(self)
@@ -78,13 +79,16 @@ end
 
 
 function update(self, dt)
+    --print(self)
 
 --kills player if goes behind the scene?
    local pos = go.get_position()
     if pos.x < -500 then
-        go.delete() 
+        msg.post("/gui#gui", "remove_energy", { dashenergy })
+        go.set_position(initial_location)
     end
     if pos.y < -100 then
+        msg.post(".", "drain_energy", { 1000 })
     	go.delete()
 	end
 --    
@@ -120,8 +124,12 @@ function update(self, dt)
     
     e_counter = e_counter + 1
     if e_counter > 500 then
-    	--msg.post("/gui#gui", "add_energy", { 5 })
+    	msg.post("/gui#gui", "add_energy", { 1 })
     	e_counter = 0
+	elseif self.energy < 2 and e_counter % 50 == 0 then
+        msg.post("#beep", "play_sound")
+	elseif e_counter % 200 == 0 and self.energy < 5 then
+	    msg.post("#beep", "play_sound")
 	end
 end
 
@@ -159,26 +167,33 @@ function on_message(self, message_id, message, sender)
         	msg.post(".", "add_score", { enemyhitscore })
         end
     elseif message_id == hash("die") then
+    	if invincibility == false then	
  
-    	if invincibility == false then
     		go.delete()
 		else
 			print("invincibility is active, can't die")
 		end
 	elseif message_id == hash("drain_energy") then
-		local amount = message
-		msg.post("/gui#gui", "remove_energy", amount) -- energy drain from impact
+        --print(self.energy)
+		self.energy = self.energy - message[1]
+		msg.post("/gui#gui", "remove_energy", message) -- energy drain from impact
 	elseif message_id == hash("energy_data") then
-		energy = message
-	
+		self.energy = message[1]
+		--print(self.energy)
+	elseif message_id == hash("add_energy") then
+		self.energy = self.energy + message[1]
+		--print(self.energy)
+		msg.post("/gui#gui", "add_energy", message[1])
+	elseif message_id == hash("get_energy") then
+		msg.post(sender, "energy_update", { self.energy })
 	end
 end
 
 local function jump(self)
 	-- check for sufficient energy
-	msg.post("/gui#gui", "show_energy")
-	--print(energy[1])
-	if ((energy[1] - jumpenergy) >= 0) then
+	--msg.post("/gui#gui", "show_energy")
+	--print(self.energy)
+	if ((self.energy - jumpenergy) >= 0) then
 	    -- basic jump from ground
 	    if self.ground_contact then
 	        -- play sound effect
@@ -188,11 +203,17 @@ local function jump(self)
 	        self.velocity.y = jump_takeoff_speed
 	    -- jetpack jump during air takes double energy and is less efficient
 	    else 
-	    	self.velocity.y = self.velocity.y + jump_takeoff_speed * 0.5
-    		msg.post("/gui#gui", "remove_energy", { (jumpenergy * 2) })
+            if ((self.energy - jumpenergy * 2) >= 0) then
+                self.velocity.y = self.velocity.y + jump_takeoff_speed * 0.5
+                msg.post("/gui#gui", "remove_energy", { (jumpenergy * 2) })
+                msg.post("#buzz", "play_sound")
+            else
+                msg.post("#noenergy", "play_sound")
+            end
 	    end
     else
     	print("insufficient energy to jump!")
+    	msg.post("#noenergy", "play_sound")
     	self.velocity.y = self.velocity.y + jump_takeoff_speed * 0.2
     end
 end
@@ -207,20 +228,23 @@ end
 
 local function dash(self)
     -- only allow dash from ground
-    
-    if self.ground_contact then
-        -- play sound effect
-        --msg.post("#jump", "play_sound")
-        -- only allow dashing if the player is not too far ahead and not too fast already
-        if self.velocity.x <= 0 and go.get_position().x < 700 then
-        	self.velocity.x = 250
-
-        	msg.post("/gui#gui", "remove_energy", { dashenergy })
-    	elseif self.velocity.x < 300 and go.get_position().x < 700 then
-        	self.velocity.x = self.velocity.x * 1.1 
-        	--print("pos: ", go.get_position(), " speed: ", self.velocity.x)
-        	msg.post("/gui#gui", "remove_energy", { dashenergy })
-    	end
+    if ((self.energy - dashenergy) >= 0) then
+	    if self.ground_contact then
+	        -- only allow dashing if the player is not too far ahead and not too fast already
+	        if self.velocity.x <= 0 and go.get_position().x < 700 then
+	        	self.velocity.x = 250
+	        	msg.post("/gui#gui", "remove_energy", { dashenergy })
+	            -- play sound effect
+	            msg.post("#rattle", "play_sound")
+	    	elseif self.velocity.x < 300 and go.get_position().x < 700 then
+	        	self.velocity.x = self.velocity.x * 1.1 
+	        	--print("pos: ", go.get_position(), " speed: ", self.velocity.x)
+	        	msg.post("/gui#gui", "remove_energy", { dashenergy })
+                msg.post("#rattle", "play_sound")
+	    	end
+	    end
+    else
+        msg.post("#noenergy", "play_sound")
     end
 end
 
