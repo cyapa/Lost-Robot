@@ -1,0 +1,1 @@
+Open the "index.html" in Firefox web browser to play the game
